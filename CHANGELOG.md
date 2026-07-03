@@ -2,6 +2,37 @@
 
 > 《老鹰抓小鸡》像素风 Web 版。为什么改比改了什么更重要——每条记清动机。
 
+## 第 4 轮 · 2026-07-04 · 上作品集前的门面轮（动态镜头 / 触屏 / 场地质感）
+
+> 本轮**只动 render/ui，sim 一行不改**（决定论地基不碰）。三件事都是纯观感/操作层。
+> 所有渲染参数进 `config.ts` 的独立块并明确标注「不进 sim」，与 `SimConfig` 逻辑隔离。
+
+### 🎥 动态镜头（`GameScene.updateCamera`）
+- **动机**：旧版全场固定视角，场地大角色小、画面空旷，作品集第一眼不抓人。
+- **做法**：每帧算「所有活动角色（母鸡+链+老鹰+脱链小鸡）」的包围盒，加边距后让它填满视口 → 目标 zoom = 视口/包围盒；zoom 和 scroll 都用 `lerp` 向目标平滑插值（防抖）；scroll 钳制在场地边界内，不露黑边；场地比视口小则居中。开局菜单/结算不受影响（只在对局 update 里跑）。
+- **渲染参数**（`config.ts` 的 `CAMERA` 块，标注不进 sim）：`margin=46`、`minZoom=1.0`、`maxZoom=2.1`、`lerp=0.08`。
+- **实测**（真浏览器 dist，母鸡模式）：角色分散时 zoom 拉远、聚拢时明显拉近（截图对比角色占屏比例，聚拢那张角色像素明显变大、网格格子变大），scroll 钳制生效（画面边缘可见场地墙不越界）。
+
+### 📱 触屏操作（`ui/touch.ts` + `render/input.ts`）
+- **动机**：手机上旧版完全没法玩（要键盘），`pageMobile` 只写着"请在电脑上打开"。
+- **做法**：屏幕左半虚拟摇杆（按下处生成、拖动给方向、松手归零）+ 右下动作按钮（按角色显示「扑/翅/蹲」）。**输出接进现有 `InputController` 的触屏通道**（`setTouchMove`/`pressTouchAction`），和键盘取并集汇入同一个 `InputFrame`，不绕过 InputController 直喂 sim。开局门 `moveHeld()` 同时认摇杆按住。仅触屏设备（`pointer:coarse` + touch point 探测）创建这些 DOM 元素，桌面完全不出现。
+- **文案**（`strings.ts`）：触屏设备显示触屏版说明（`skill*Touch`/`tutorialMoveTouch`/`tutorialStartTouch`），`pageMobile` 改成"左半屏摇杆移动，右下按钮出技能"。
+- **实测**（真浏览器 iPhone 12 视口 + `hasTouch`，小鸡模式）：dispatch 触控事件模拟摇杆右上拖动 → 小鸡从 `(0,33)` 移到 `(18.9,-7.8)` 且 `phase=playing`（证明摇杆走通了开局门）；动作按钮按下 → `crouchLeft=0.75`（蹲下触发）；截图确认摇杆在左下、按钮在右下、都不挡顶部 HUD。
+
+### 🌿 场地质感 + 抓捕反馈（`GameScene.drawTerrain` / `spawnFeathers`）
+- **动机**：纯浅绿草地太空；抓捕瞬间也没反馈。
+- **做法**：程序生成草丛（短竖线）/碎花（小十字）/色斑（淡椭圆），密度低对比弱不抢角色；**用 render 侧自己的 mulberry32（种子固定 `TERRAIN.seed`），绝不碰 sim 的 `rngState`** → 图案每局一致、决定论不受影响。抓捕瞬间：消费 sim 的 `catch` 事件，在被抓位置撒一小撮羽毛粒子 + `camera.shake(120ms, 0.004)` 极轻微震屏（纯渲染，事件本就由 sim 产出、渲染层消费）。
+- **渲染参数**（`config.ts` 的 `TERRAIN` 块）：`seed`、`density=0.010`、`colors`（5 色，融进草地）。
+- **实测**：截图确认草丛/碎花均匀铺满且弱对比不抢角色；抓捕后截图见羽毛/震屏路径已跑（HUD 已抓 0→1）。
+
+### ✅ 验收
+- `npm test`：23 passed（原 23 一个没挂——sim 未改，决定论测试全绿）。
+- `npm run build`：通过（>500kB 警告仍是 Phaser 包体，非本轮引入）。
+- 桌面/触屏均真浏览器（headless Chromium / Playwright）验证，无 pageerror。
+- `npx vite build --outDir docs --emptyOutDir` 重新出 docs；**未 git commit / 未部署**（等 Max 验收后自行发版）。
+- 新增触屏文案，但项目至今走系统 `Courier New`/无像素中文子集工具链（第 1 轮遗留），故本轮不涉及字体子集重跑。
+- ⚠️ **验证口径说明**：`__game` 调试钩子由 `import.meta.env.DEV` 门控，仅 `vite` dev server 注入、`vite build` 产物没有。故需读 sim 内部坐标作证的触屏/镜头 zoom 数值验证跑在 dev server 上；纯视觉截图（角色占屏比例、控件位置）跑在生产 dist 上。两者页面代码同源。
+
 ## 第 3 轮 · 2026-07-04 · 真浏览器复现修开局门（老鹰"冻结"真凶）
 
 > 本轮所有结论都来自**真浏览器**（headless Chromium，Playwright 驱动 dist），不靠单元测试下结论。

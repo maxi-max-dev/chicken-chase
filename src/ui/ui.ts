@@ -3,7 +3,10 @@
 
 import { S } from '../strings'
 import { app } from '../app'
+import { isTouchDevice } from '../render/input'
 import type { Role, SimState } from '../sim/types'
+
+const TOUCH = isTouchDevice()
 
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -85,8 +88,8 @@ export class UI {
     t.appendChild(el('h2', '', S.tutorialGoal))
     this.tutorialSkill = el('p', 'skill', '')
     t.appendChild(this.tutorialSkill)
-    t.appendChild(el('p', 'move', S.tutorialMove))
-    t.appendChild(el('p', 'start-cue', S.tutorialStart))
+    t.appendChild(el('p', 'move', TOUCH ? S.tutorialMoveTouch : S.tutorialMove))
+    t.appendChild(el('p', 'start-cue', TOUCH ? S.tutorialStartTouch : S.tutorialStart))
     this.tutorial = t
     this.root.appendChild(t)
   }
@@ -148,7 +151,9 @@ export class UI {
   showGame(role: Role): void {
     this.menu.classList.add('hidden')
     this.result.classList.add('hidden')
-    const skill = [S.skillEagle, S.skillHen, S.skillChick][role]
+    const skill = TOUCH
+      ? [S.skillEagleTouch, S.skillHenTouch, S.skillChickTouch][role]
+      : [S.skillEagle, S.skillHen, S.skillChick][role]
     this.tutorialSkill.textContent = skill
     this.tutorial.classList.remove('hidden')
     this.hud.classList.remove('hidden')

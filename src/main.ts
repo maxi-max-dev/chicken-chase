@@ -6,6 +6,8 @@ import { VIEW } from './sim/config'
 import { app } from './app'
 import { GameScene, type SceneHooks } from './render/GameScene'
 import { UI } from './ui/ui'
+import { TouchControls } from './ui/touch'
+import { isTouchDevice } from './render/input'
 import type { Role, SimState } from './sim/types'
 
 const SCALE = 3
@@ -16,15 +18,23 @@ const gameRoot = document.getElementById('game')!
 let game: Phaser.Game | null = null
 let seed = 1
 
+// 触屏虚拟控件（仅触屏设备创建/显示）
+const touch = isTouchDevice() ? new TouchControls(uiRoot) : null
+
 const hooks: SceneHooks = {
   onResult: (winner, score) => ui.showResult(winner, score),
   onTick: (s: SimState) => ui.updateHUD(s),
+  onSceneReady: (controls) => touch?.attach(controls),
 }
 
 function startGame(role: Role): void {
   app.startGame(role)
   ui.showGame(role)
   seed = (Date.now() & 0x7fffffff) || 1
+  if (touch) {
+    touch.setRole(role)
+    touch.show()
+  }
 
   if (!game) {
     game = new Phaser.Game({
@@ -53,6 +63,7 @@ function restart(): void {
 function backToMenu(): void {
   app.backToMenu()
   ui.showMenu()
+  touch?.hide()
   if (game) game.scene.stop('game')
 }
 

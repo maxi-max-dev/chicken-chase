@@ -21,6 +21,13 @@ export const S = {
   tutorialGoal: '90 秒内抓住 3 只老鹰赢；守到时间结束鸡群赢',
   tutorialStart: '按移动键开始',
 
+  // 触屏版说明（仅触屏设备显示，替换上面对应几条）
+  skillEagleTouch: '按「扑」钮 扑击 — 只有扑击中碰到小鸡才算抓到',
+  skillHenTouch: '按「翅」钮 开/收翅膀 — 张开挡得宽，收起跑得快',
+  skillChickTouch: '按「蹲」钮 紧急蹲下 — 1 秒免抓，有冷却',
+  tutorialMoveTouch: '左半屏 拖动摇杆 移动',
+  tutorialStartTouch: '推动摇杆开始',
+
   // HUD
   hudCaught: '已抓',
   hudAlive: '存活',
@@ -37,6 +44,6 @@ export const S = {
 
   // 网页
   pageTip: '先点一下游戏画面再按键——浏览器需要键盘焦点',
-  pageMobile: '需要键盘，请在电脑上打开',
+  pageMobile: '左半屏摇杆移动，右下按钮出技能',
   tuningHint: 'Tab 调参面板',
 }

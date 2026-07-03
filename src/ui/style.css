@@ -177,6 +177,74 @@ body {
   color: #c8e6a0;
 }
 
+/* 触屏虚拟控件（仅触屏设备显示；桌面永不创建/显示） */
+.touch-stick-zone {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  pointer-events: auto;
+  touch-action: none;
+  z-index: 5;
+}
+.touch-stick {
+  position: absolute;
+  width: 116px;
+  height: 116px;
+  margin-left: -58px;
+  margin-top: -58px;
+  border-radius: 50%;
+  background: rgba(20, 30, 14, 0.28);
+  border: 2px solid rgba(255, 248, 230, 0.35);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+  z-index: 6;
+}
+.touch-stick.active {
+  opacity: 1;
+}
+.touch-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  margin: 0;
+  border-radius: 50%;
+  background: rgba(255, 225, 77, 0.7);
+  border: 2px solid rgba(179, 74, 26, 0.8);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.touch-action {
+  position: absolute;
+  right: 26px;
+  bottom: 34px;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: rgba(217, 74, 58, 0.82);
+  border: 3px solid #ffe14d;
+  color: #fff8e6;
+  font-size: 30px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 6;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
+}
+.touch-action.pressed {
+  transform: scale(0.92);
+  background: rgba(255, 122, 90, 0.95);
+}
+
 /* 结算 */
 .result-title {
   font-size: 32px;
