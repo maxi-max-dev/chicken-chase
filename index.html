@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>老鹰抓小鸡</title>
+    <link rel="stylesheet" href="./src/ui/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="game"></div>
+      <div id="ui"></div>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+    <script>
+      // GoatCounter 访客统计：仅线上（github.io）注入，本地开发不收集
+      if (location.hostname.endsWith('github.io')) {
+        var gc = document.createElement('script');
+        gc.async = true;
+        gc.dataset.goatcounter = 'https://maxdev.goatcounter.com/count';
+        gc.src = '//gc.zgo.at/count.js';
+        document.head.appendChild(gc);
+      }
+    </script>
+  </body>
+</html>
