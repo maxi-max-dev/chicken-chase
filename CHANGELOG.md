@@ -2,6 +2,11 @@
 
 > 《老鹰抓小鸡》像素风 Web 版。为什么改比改了什么更重要——每条记清动机。
 
+## 杂项 · 2026-08-05 · console 卫生：favicon 404 抑制
+
+- **动机**：页面没声明 favicon 时，浏览器会自动向 origin 根目录请求 `/favicon.ico`；本站挂在 maxi-max-dev.github.io 子路径下，根目录没有这个文件，于是每次独立访问 console 都躺一条 404（portfolio-health.mjs 体检抓到，全站统一修）。
+- **做法**：`index.html`（Vite 源模板）和 `docs/index.html`（线上产物）的 `<head>` 各加一行 `<link rel="icon" href="data:," />`——空 data URI，浏览器不再发请求。纯错误抑制，sim/render/ui 零改动，不算轮次。
+
 ## 第 4 轮 · 2026-07-04 · 上作品集前的门面轮（动态镜头 / 触屏 / 场地质感）
 
 > 本轮**只动 render/ui，sim 一行不改**（决定论地基不碰）。三件事都是纯观感/操作层。
